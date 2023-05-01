@@ -100,6 +100,7 @@ fun DogItem(dog: Dog, modifier: Modifier = Modifier) {
         modifier = modifier.padding(8.dp),
         elevation = 4.dp
     ) {
+        var expanded by remember { mutableStateOf(false) }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -107,6 +108,7 @@ fun DogItem(dog: Dog, modifier: Modifier = Modifier) {
         ) {
             DogIcon(dog.imageResourceId)
             DogInformation(dog.name, dog.age)
+            DogItemButton(expanded = expanded, onClick = { /*TODO*/ })
         }
     }
 }
@@ -118,7 +120,6 @@ fun DogItemButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var expanded by remember { mutableStateOf(false) }
     IconButton(onClick = onClick) {
         //состовной элемент
         Icon(
