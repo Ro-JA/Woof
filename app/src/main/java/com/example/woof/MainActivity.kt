@@ -21,6 +21,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -104,29 +107,44 @@ fun DogItem(dog: Dog, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.padding_small))
-        ) {
-            DogIcon(dog.imageResourceId)
-            DogInformation(dog.name, dog.age)
-            Spacer(modifier = Modifier.weight(1f))
-            DogItemButton(
-                expanded = expanded,
-                onClick = { expanded != expanded },
-            )
-        }
-        if (expanded) {
-            DogHobby(
-                dogHobby = dog.hobbies,
-                modifier = Modifier.padding(
-                    start = dimensionResource(id = R.dimen.padding_medium),
-                    end = dimensionResource(id = R.dimen.padding_medium),
-                    top = dimensionResource(id = R.dimen.padding_small),
-                    bottom = dimensionResource(id = R.dimen.padding_medium)
+                    // модификатор для анимаций изменения размера
+                .animateContentSize(
+                    // параметр для настроики анимаций устанавливаем анимацию пружина
+                    animationSpec = spring(
+                        // Демпфирующая способность
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        // настройка жесткости
+                        stiffness = Spring.StiffnessMedium
+                    )
                 )
-            )
+        )
+        {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+            ) {
+                DogIcon(dog.imageResourceId)
+                DogInformation(dog.name, dog.age)
+                Spacer(modifier = Modifier.weight(1f))
+                DogItemButton(
+                    expanded = expanded,
+                    onClick = { expanded != expanded },
+                )
+            }
+            if (expanded) {
+                DogHobby(
+                    dogHobby = dog.hobbies,
+                    modifier = Modifier.padding(
+                        start = dimensionResource(id = R.dimen.padding_medium),
+                        end = dimensionResource(id = R.dimen.padding_medium),
+                        top = dimensionResource(id = R.dimen.padding_small),
+                        bottom = dimensionResource(id = R.dimen.padding_medium)
+                    )
+                )
+            }
         }
     }
 }
@@ -151,7 +169,7 @@ fun DogItemButton(
             contentDescription = stringResource(R.string.expand_button_content_description),
             // установит свет значка
             tint = MaterialTheme.colors.secondary,
-            )
+        )
     }
 }
 
@@ -162,8 +180,10 @@ fun DogItemButton(
  * @param modifier modifiers to set to this composable
  */
 @Composable
-fun DogIcon(@DrawableRes dogIcon: Int,
-            modifier: Modifier = Modifier) {
+fun DogIcon(
+    @DrawableRes dogIcon: Int,
+    modifier: Modifier = Modifier
+) {
     Image(
         modifier = modifier
             .size(dimensionResource(R.dimen.image_size))
