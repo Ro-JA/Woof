@@ -21,6 +21,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -118,6 +119,12 @@ fun DogItem(
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
+    // обевляем переменую свет и делегируем ее функций animate*AsState
+    val color by animateColorAsState(
+        // задаем начальное значения света если тру то primary иначе surface
+        targetValue = if (expanded) MaterialTheme.colors.primary
+        else MaterialTheme.colors.surface, )
+
     Card(
         modifier = modifier
     ) {
@@ -129,6 +136,7 @@ fun DogItem(
                         stiffness = Spring.StiffnessMedium
                     )
                 )
+                .background(color = color)
         ) {
             Row(
                 modifier = Modifier
