@@ -111,7 +111,8 @@ fun DogItem(dog: Dog, modifier: Modifier = Modifier) {
             DogIcon(dog.imageResourceId)
             DogInformation(dog.name, dog.age)
             Spacer(modifier = Modifier.weight(1f))
-            DogItemButton(expanded = expanded, onClick = { /*TODO*/ })
+            DogItemButton(expanded = expanded,
+                onClick = { expanded != expanded })
         }
     }
 }
@@ -178,6 +179,23 @@ fun DogInformation(@StringRes dogName: Int, dogAge: Int, modifier: Modifier = Mo
             text = stringResource(R.string.years_old, dogAge),
             style = MaterialTheme.typography.body1
         )
+    }
+}
+
+@Composable
+fun DogHobby(@StringRes dogHobby: Int, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .padding(
+                start = 16.dp,
+                top = 8.dp,
+                bottom = 16.dp,
+                end = 16.dp
+            )
+    ) {
+        Text(text = stringResource(id = R.string.about),
+        style = MaterialTheme.typography.h3)
+
     }
 }
 
