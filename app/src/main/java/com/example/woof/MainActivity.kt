@@ -29,6 +29,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,6 +42,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Expand
@@ -71,7 +73,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             WoofTheme {
-                WoofApp()
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    WoofApp()
+                }
             }
         }
     }
@@ -80,19 +87,23 @@ class MainActivity : ComponentActivity() {
 /**
  * Composable that displays an app bar and a list of dogs.
  */
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+
 @Composable
 fun WoofApp() {
-    Scaffold(topBar = {
-        WoofTopAppBar()
-    }) {
-        LazyColumn(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    Scaffold(
+        topBar = {
+            WoofTopAppBar()
+        }
+    ) { it ->
+        LazyColumn(contentPadding = it) {
             items(dogs) {
-                DogItem(dog = it)
+                DogItem(
+                    dog = it,
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+                )
             }
         }
     }
-
 }
 
 /**
@@ -102,52 +113,50 @@ fun WoofApp() {
  * @param modifier modifiers to set to this composable
  */
 @Composable
-fun DogItem(dog: Dog, modifier: Modifier = Modifier) {
+fun DogItem(
+    dog: Dog,
+    modifier: Modifier = Modifier
+) {
     var expanded by remember { mutableStateOf(false) }
     Card(
         modifier = modifier
     ) {
         Column(
             modifier = Modifier
-                    // модификатор для анимаций изменения размера
                 .animateContentSize(
-                    // параметр для настроики анимаций устанавливаем анимацию пружина
                     animationSpec = spring(
-                        // Демпфирующая способность
                         dampingRatio = Spring.DampingRatioNoBouncy,
-                        // настройка жесткости
                         stiffness = Spring.StiffnessMedium
                     )
                 )
-        )
-        {
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(dimensionResource(id = R.dimen.padding_small))
+                    .padding(dimensionResource(R.dimen.padding_small))
             ) {
                 DogIcon(dog.imageResourceId)
                 DogInformation(dog.name, dog.age)
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(Modifier.weight(1f))
                 DogItemButton(
                     expanded = expanded,
-                    onClick = { expanded != expanded },
+                    onClick = { expanded = !expanded },
                 )
             }
             if (expanded) {
                 DogHobby(
-                    dogHobby = dog.hobbies,
-                    modifier = Modifier.padding(
-                        start = dimensionResource(id = R.dimen.padding_medium),
-                        end = dimensionResource(id = R.dimen.padding_medium),
-                        top = dimensionResource(id = R.dimen.padding_small),
-                        bottom = dimensionResource(id = R.dimen.padding_medium)
+                    dog.hobbies, modifier = Modifier.padding(
+                        start = dimensionResource(R.dimen.padding_medium),
+                        top = dimensionResource(R.dimen.padding_small),
+                        bottom = dimensionResource(R.dimen.padding_medium),
+                        end = dimensionResource(R.dimen.padding_medium)
                     )
                 )
             }
         }
     }
 }
+
 
 
 // функция для значка подробной информацмий
@@ -222,24 +231,23 @@ fun DogInformation(@StringRes dogName: Int, dogAge: Int, modifier: Modifier = Mo
 }
 
 @Composable
-fun DogHobby(@StringRes dogHobby: Int, modifier: Modifier = Modifier) {
+fun DogHobby(
+    @StringRes dogHobby: Int,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
-            .padding(
-                start = 16.dp,
-                top = 8.dp,
-                bottom = 16.dp,
-                end = 16.dp
-            )
     ) {
         Text(
-            text = stringResource(id = R.string.about),
+            text = stringResource(R.string.about),
             style = MaterialTheme.typography.h3
         )
-
+        Text(
+            text = stringResource(dogHobby),
+            style = MaterialTheme.typography.body1
+        )
     }
 }
-
 @Preview
 @Composable
 fun DarkThemePreview() {
